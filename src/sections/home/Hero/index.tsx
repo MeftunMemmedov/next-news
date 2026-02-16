@@ -30,7 +30,7 @@ const Hero = ({ hot_article, breaking_articles }: Props) => {
                   HOT NOW
                 </span>
 
-                <Link href={''}>
+                <Link href={`/${hot_article.category.id}/${hot_article.id}`}>
                   <h2
                     className="font-bold my-5 text-white hover:text-gray-300 transition"
                     style={{ fontSize: 'clamp(30px, 1.800rem + ((1vw - 3.2px) * 1.563), 50px)' }}

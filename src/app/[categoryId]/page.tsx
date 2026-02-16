@@ -2,6 +2,7 @@ import { convert } from 'html-to-text';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MdArrowForwardIos } from 'react-icons/md';
+import { Metadata } from 'next';
 
 import { getDataDetails, getDataList } from '@/api/helpers';
 import ChildCategories from '@/components/Pages/ArticleDetails/ChildCategories';
@@ -12,6 +13,21 @@ import { Article, Category } from '@/types';
 interface Props {
   params: Promise<{ categoryId: string }>;
 }
+
+export const generateStaticParams = async () => {
+  const categories = await getDataList<Category>('news_categories');
+
+  return categories.map(category => ({ categoryId: category.id }));
+};
+
+export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
+  const { categoryId } = await params;
+  const category = await getDataDetails<Category>('news_categories', { id: `eq.${categoryId}` });
+
+  return {
+    title: `News | ${category.title}`,
+  };
+};
 
 const page = async ({ params }: Props) => {
   const { categoryId } = await params;

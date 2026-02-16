@@ -1,8 +1,14 @@
+import { Metadata } from 'next';
+
 import { getDataDetails, getDataList } from '@/api/helpers';
 import BreakingNews from '@/sections/home/BreakingNews';
 import EditorChoice from '@/sections/home/EditorChoice';
 import Hero from '@/sections/home/Hero';
 import { Article } from '@/types';
+
+export const metadata: Metadata = {
+  title: 'News',
+};
 
 const page = async () => {
   // const articles = await getDataList<Article>('news_articles', {

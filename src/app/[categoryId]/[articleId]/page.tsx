@@ -1,18 +1,39 @@
 import Link from 'next/link';
 import { MdArrowForwardIos } from 'react-icons/md';
 import { format } from 'date-fns';
+import { Metadata } from 'next';
 
 import SmallArticleCard from '@/components/SmallArticleCard';
 import ShareButtons from '@/components/ArticleDetails/ShareButons';
 import RelatedArticleSlider from '@/components/ArticleDetails/RelatedArticleSlider';
 import { getDataDetails, getDataList } from '@/api/helpers';
 import { Article } from '@/types';
+import CommentForm from '@/components/ArticleDetails/CommentForm';
+import Comments from '@/components/ArticleDetails/Comments';
 
 import { increaseViewCount } from './actions';
 
 interface Props {
   params: Promise<{ articleId: string }>;
 }
+
+export const generateStaticParams = async () => {
+  const articles = await getDataList<Article>('news_articles');
+
+  return articles.map(article => ({ categoryId: article.id }));
+};
+
+export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
+  const { articleId } = await params;
+  const article = await getDataDetails<Article>('news_articles', {
+    id: `eq.${articleId}`,
+    select: '*,category(*, parent(*))',
+  });
+
+  return {
+    title: `News | ${article.category.title} | ${article.title}`,
+  };
+};
 
 const page = async ({ params }: Props) => {
   const { articleId } = await params;
@@ -88,7 +109,8 @@ const page = async ({ params }: Props) => {
             <RelatedArticleSlider relatedArticles={relatedArticles} />
             <hr className="text-neutral-900 my-10" />
 
-            {/* <CommentForm articleId={article.id} /> */}
+            <CommentForm articleId={article.id} />
+            <Comments articleId={article.id} />
           </div>
 
           <div className="lg:w-1/3 lg:block hidden">
